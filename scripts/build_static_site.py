@@ -23,6 +23,7 @@ PAGES_API = f"{BASE_URL}/wp-json/wp/v2/pages?per_page=100&_embed=1"
 POSTS_API = f"{BASE_URL}/wp-json/wp/v2/posts?per_page=100&_embed=1"
 CATEGORIES_API = f"{BASE_URL}/wp-json/wp/v2/categories?per_page=100"
 DEPLOY_BASE = "https://snyperf1.github.io/engineeringgood-homepage-refresh/"
+ASSET_VERSION = "20260529-cardfix"
 
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "Codex static-site recreation"})
@@ -230,19 +231,32 @@ def compact_context(value: str, limit: int = 90) -> str:
 
 def improve_link_labels(soup: BeautifulSoup) -> None:
     generic = {"read more", "read", "learn more", "click here", "here"}
-    for link in soup.find_all("a"):
-        label = text_from_html(str(link)).lower().strip("» ")
-        if label not in generic:
-            continue
 
+    def context_for(link) -> str:
+        heading = link.find(["h2", "h3", "h4", "h5", "h6"])
+        if heading and heading.get_text(strip=True):
+            return compact_context(heading.get_text(" ", strip=True))
         context_node = link.find_parent(["li", "p", "figcaption", "td"])
         context = text_from_html(str(context_node)) if context_node else ""
         if not context:
-            previous_heading = link.find_previous(["h2", "h3"])
+            previous_heading = link.find_previous(["h2", "h3", "h4", "h5", "h6"])
             context = previous_heading.get_text(" ", strip=True) if previous_heading else ""
-        context = compact_context(context)
-        link.clear()
-        link.append(f"Read more about {context}")
+        if not context:
+            context = text_from_html(str(link))
+        return compact_context(context)
+
+    for link in soup.find_all("a"):
+        label = text_from_html(str(link)).lower().strip("» ")
+        context = context_for(link)
+        if label in generic:
+            link.clear()
+            link.append(f"Read more about {context}")
+            continue
+
+        for text_node in list(link.find_all(string=True)):
+            node_label = " ".join(text_node.strip().lower().strip("» ").split())
+            if node_label in generic:
+                text_node.replace_with(f"Explore {context}")
 
 
 def normalize_headings(soup: BeautifulSoup) -> None:
@@ -423,8 +437,8 @@ def page_template(
     hero_url = featured_image(item)
     hero_asset = download_asset(hero_url) if hero_url else FALLBACK_HERO
     hero_src = local_asset_href(current_file, hero_asset)
-    css = local_asset_href(current_file, "styles.css")
-    js = local_asset_href(current_file, "script.js")
+    css = f"{local_asset_href(current_file, 'styles.css')}?v={ASSET_VERSION}"
+    js = f"{local_asset_href(current_file, 'script.js')}?v={ASSET_VERSION}"
     source = item.get("link", BASE_URL)
     return f"""<!doctype html>
 <html lang="en">
