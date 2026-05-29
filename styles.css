@@ -264,6 +264,10 @@ input {
   inset: 0;
 }
 
+.hero-media {
+  z-index: 0;
+}
+
 .hero-slide,
 .contribute-media img {
   width: 100%;
@@ -394,17 +398,31 @@ h3 {
   bottom: 36px;
   z-index: 4;
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
-.hero-progress span {
-  width: 34px;
+.hero-progress button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.hero-progress button::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 20px;
   height: 4px;
-  background: rgb(255 255 255 / 36%);
   border-radius: 999px;
+  background: rgb(255 255 255 / 42%);
 }
 
-.hero-progress span.is-active {
+.hero-progress button.is-active::before {
   background: var(--orange);
 }
 
@@ -451,6 +469,9 @@ h3 {
   gap: 10px;
   color: var(--orange-readable);
   font-weight: 900;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
 }
 
 .text-link::after {
@@ -661,6 +682,12 @@ h3 {
   line-height: 1.14;
 }
 
+.story-card h3 a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
 .story-card h3 a:hover {
   color: var(--orange-readable);
 }
@@ -782,6 +809,12 @@ address {
 
 .site-footer a:hover {
   color: var(--light-blue);
+}
+
+.site-footer a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 
 .newsletter {

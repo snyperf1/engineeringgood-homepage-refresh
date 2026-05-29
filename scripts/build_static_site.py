@@ -192,7 +192,11 @@ def featured_image(item: dict) -> str | None:
 
 
 def rewrite_link(href: str, current_file: Path, route_map: dict[str, str]) -> str:
-    if not href or href.startswith(("#", "mailto:", "tel:", "javascript:")):
+    if not href:
+        return href
+    if href.startswith("mailto:"):
+        return "mailto:" + href.replace("mailto:", "", 1).strip()
+    if href.startswith(("#", "tel:", "javascript:")):
         return href
     if href.startswith("ahttp://") or href.startswith("ahttps://"):
         href = href[1:]
@@ -211,6 +215,46 @@ def rewrite_link(href: str, current_file: Path, route_map: dict[str, str]) -> st
             return relative_href(current_file, route_map[path])
         return href.lstrip("/")
     return href
+
+
+def compact_context(value: str, limit: int = 90) -> str:
+    value = re.sub(r"\b(read|read more|watch|listen)\b", "", value or "", flags=re.I)
+    value = re.sub(r"\s+", " ", value).strip(" -:|,")
+    if not value:
+        return "this item"
+    if len(value) <= limit:
+        return value
+    clipped = value[: limit + 1]
+    return clipped[: clipped.rfind(" ")].rstrip(" -:|,") + "."
+
+
+def improve_link_labels(soup: BeautifulSoup) -> None:
+    generic = {"read more", "read", "learn more", "click here", "here"}
+    for link in soup.find_all("a"):
+        label = text_from_html(str(link)).lower().strip("» ")
+        if label not in generic:
+            continue
+
+        context_node = link.find_parent(["li", "p", "figcaption", "td"])
+        context = text_from_html(str(context_node)) if context_node else ""
+        if not context:
+            previous_heading = link.find_previous(["h2", "h3"])
+            context = previous_heading.get_text(" ", strip=True) if previous_heading else ""
+        context = compact_context(context)
+        link.clear()
+        link.append(f"Read more about {context}")
+
+
+def normalize_headings(soup: BeautifulSoup) -> None:
+    for heading in soup.find_all(["h1", "h4", "h5", "h6"]):
+        if not heading.get_text(strip=True):
+            heading.decompose()
+            continue
+        heading.name = "h2" if heading.name == "h1" else "h3"
+
+    for heading in soup.find_all(["h2", "h3"]):
+        if not heading.get_text(strip=True) and not heading.find("img"):
+            heading.decompose()
 
 
 def clean_content(raw_html: str, current_file: Path, route_map: dict[str, str]) -> str:
@@ -252,6 +296,9 @@ def clean_content(raw_html: str, current_file: Path, route_map: dict[str, str]) 
         if link.get("href", "").startswith(("http://", "https://")):
             link["target"] = "_blank"
             link["rel"] = "noopener"
+
+    improve_link_labels(soup)
+    normalize_headings(soup)
 
     allowed_attrs = {
         "a": {"href", "target", "rel"},
@@ -317,7 +364,7 @@ def nav_html(current_file: Path, route_map: dict[str, str]) -> str:
       <button class="menu-toggle" type="button" aria-controls="site-navigation" aria-expanded="false">
         <span></span><span></span><span></span><span class="sr-only">Menu</span>
       </button>
-      <nav class="site-nav" id="site-navigation" aria-label="Main navigation">
+      <nav class="site-nav" id="site-navigation" aria-label="Primary navigation">
         <ul>{''.join(links)}</ul>
       </nav>
       <a class="donate-link" href="{donate}">Donate</a>

@@ -20,49 +20,22 @@
 <span></span>
 <span class="sr-only">Menu</span>
 </button>
-<nav aria-label="Main navigation" class="site-nav" id="site-navigation">
+<nav aria-label="Primary navigation" class="site-nav" id="site-navigation">
 <ul>
 <li><a href="./">Home</a></li>
-<li class="has-menu">
-<a href="about/index.html">About</a>
-<ul>
-<li><a href="about/index.html">About Us</a></li>
-<li><a href="contact-faq/index.html">Contact &amp; FAQ</a></li>
-<li><a href="careers/index.html">Careers</a></li>
-</ul>
-</li>
-<li class="has-menu">
-<a href="assistive-technology/index.html">Our Work</a>
-<ul>
+<li><a href="about/index.html">About</a></li>
 <li><a href="assistive-technology/index.html">Assistive Technology</a></li>
-<li><a href="makerspace/index.html">Makerspace</a></li>
-<li><a href="bespoke-projects/index.html">Bespoke Projects</a></li>
 <li><a href="digital-inclusion/index.html">Digital Inclusion</a></li>
-</ul>
-</li>
-<li class="has-menu">
-<a href="stories/index.html">Publications</a>
-<ul>
 <li><a href="stories/index.html">Stories</a></li>
-<li><a href="media/index.html">Media &amp; Annual Reports</a></li>
-</ul>
-</li>
 <li><a href="events/index.html">Events</a></li>
-<li class="has-menu">
-<a href="individual/index.html">Contribute</a>
-<ul>
-<li><a href="engineering-possibilities-2026/index.html">Engineering Possibilities</a></li>
-<li><a href="individual/index.html">Individual</a></li>
-<li><a href="corporate/index.html">Corporate</a></li>
-</ul>
-</li>
+<li><a href="individual/index.html">Contribute</a></li>
 </ul>
 </nav>
 <a class="donate-link" href="donate/index.html">Donate</a>
 </header>
 <main id="content">
 <section aria-labelledby="hero-title" class="hero">
-<div aria-hidden="true" class="hero-media">
+<div aria-label="Volunteer image carousel" class="hero-media" role="group">
 <img alt="" class="hero-slide is-active" src="assets/hero-assistive.webp"/>
 <img alt="" class="hero-slide" src="assets/hero-accelerator.webp"/>
 <img alt="" class="hero-slide" src="assets/hero-volunteers.webp"/>
@@ -78,11 +51,11 @@
 <a class="button button-secondary" href="individual/index.html">Volunteer</a>
 </div>
 </div>
-<div aria-hidden="true" class="hero-progress">
-<span class="is-active"></span>
-<span></span>
-<span></span>
-<span></span>
+<div aria-label="Volunteer image carousel controls" class="hero-progress">
+<button aria-label="Go to slide 1" class="is-active" type="button"></button>
+<button aria-label="Go to slide 2" type="button"></button>
+<button aria-label="Go to slide 3" type="button"></button>
+<button aria-label="Go to slide 4" type="button"></button>
 </div>
 </section>
 <section class="about-section section-pad">
@@ -152,7 +125,7 @@
 <div>
 <h3>Assistive Technology</h3>
 <p>Affordable open-source assistive solutions for persons with disabilities of all ages.</p>
-<a class="button button-compact" href="assistive-technology/index.html">Read More</a>
+<a class="button button-compact" href="assistive-technology/index.html">Read more about Assistive Technology</a>
 </div>
 </article>
 <article class="work-card reveal">
@@ -160,7 +133,7 @@
 <div>
 <h3>Digital Inclusion</h3>
 <p>Laptop salvage, repair training, and distribution for vulnerable and low-income families.</p>
-<a class="button button-compact" href="digital-inclusion/index.html">Read More</a>
+<a class="button button-compact" href="digital-inclusion/index.html">Read more about Digital Inclusion</a>
 </div>
 </article>
 </div>
@@ -267,14 +240,14 @@
 <p>Sign up for volunteer calls, workshops, and Engineering Good updates.</p>
 <label>
 <span>Name</span>
-<input autocomplete="name" name="name" type="text"/>
+<input autocomplete="name" id="newsletter-name" name="name" type="text"/>
 </label>
 <label>
-<span>Email</span>
-<input autocomplete="email" name="email" type="email"/>
+<span>Email Address</span>
+<input aria-describedby="newsletter-status" autocomplete="email" id="newsletter-email" name="email" type="email"/>
 </label>
 <button type="submit">Sign Me Up</button>
-<p aria-live="polite" class="form-note" role="status"></p>
+<p aria-live="polite" class="form-note" id="newsletter-status" role="status"></p>
 </form>
 </div>
 <div class="footer-bottom">

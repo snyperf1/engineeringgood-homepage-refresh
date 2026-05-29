@@ -1,7 +1,7 @@
 const body = document.body;
 const menuToggle = document.querySelector(".menu-toggle");
 const slides = Array.from(document.querySelectorAll(".hero-slide"));
-const progress = Array.from(document.querySelectorAll(".hero-progress span"));
+const progress = Array.from(document.querySelectorAll(".hero-progress button"));
 const revealItems = Array.from(document.querySelectorAll(".reveal"));
 const counters = Array.from(document.querySelectorAll("[data-count]"));
 const newsletter = document.querySelector(".newsletter");
@@ -22,6 +22,8 @@ document.querySelectorAll(".site-nav a").forEach((link) => {
 let activeSlide = 0;
 
 function showSlide(index) {
+  activeSlide = index;
+
   slides.forEach((slide, slideIndex) => {
     slide.classList.toggle("is-active", slideIndex === index);
   });
@@ -31,10 +33,13 @@ function showSlide(index) {
   });
 }
 
+progress.forEach((button, index) => {
+  button.addEventListener("click", () => showSlide(index));
+});
+
 if (slides.length > 1 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
   window.setInterval(() => {
-    activeSlide = (activeSlide + 1) % slides.length;
-    showSlide(activeSlide);
+    showSlide((activeSlide + 1) % slides.length);
   }, 5200);
 }
 
@@ -91,7 +96,7 @@ newsletter?.addEventListener("submit", (event) => {
   note.classList.remove("is-success", "is-warning");
 
   if (!email || !email.includes("@")) {
-    note.textContent = "Enter a valid email to continue.";
+    note.textContent = "Enter a valid email address.";
     note.classList.add("is-warning");
     form.email.focus();
     return;
